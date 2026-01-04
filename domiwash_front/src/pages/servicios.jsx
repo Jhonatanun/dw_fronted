@@ -7,7 +7,7 @@ export default function Servicios() {
   const [servicioEditado, setServicioEditado] = useState(null);
 
   const cargarServicios = () => {
-    api.get('/servicios').then(res => setServicios(res.data));
+    api.get('/servicios').then(res =>{console.log('📦 Servicios:', res.data); setServicios(res.data); } );
   };
 
   useEffect(() => {
@@ -32,8 +32,13 @@ export default function Servicios() {
             <th>Fecha</th>
             <th>Servicio</th>
             <th>Precio</th>
+            <th>Costo</th>
+            <th>Cliente</th>
+            <th>Forma de Pago</th>
             <th>Estado</th>
+            <th>Observaciones</th>
             <th>Acciones</th>
+
           </tr>
         </thead>
         <tbody>
@@ -42,7 +47,11 @@ export default function Servicios() {
               <td>{s.fecha}</td>
               <td>{s.tipo_servicio}</td>
               <td>${s.precio}</td>
+              <td>${s.costo}</td>
+              <td>{s.cliente}</td>
+              <td>{s.forma_pago}</td>
               <td>{s.estado}</td>
+              <td>{s.observaciones}</td>
               <td>
                 <button onClick={() => setServicioEditado(s)}>Editar</button>
               </td>
