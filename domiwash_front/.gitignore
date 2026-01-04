@@ -1,0 +1,40 @@
+# ======================
+# Node.js
+# ======================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ======================
+# Vite / React
+# ======================
+dist/
+.vite/
+
+# ======================
+# Variables de entorno
+# ======================
+.env
+.env.local
+.env.development
+.env.production
+
+# ======================
+# Cache
+# ======================
+.cache/
+
+# ======================
+# Editor / SO
+# ======================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ======================
+# Testing
+# ======================
+coverage/
