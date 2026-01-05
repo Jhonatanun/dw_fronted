@@ -13,12 +13,19 @@ const initialState = {
 };
 
 export default function ServicioForm({ servicioEditado, onSuccess }) {
+
   const [form, setForm] = useState(initialState);
   const [tipos, setTipos] = useState([]);
   const [estados, setEstados] = useState([]);
   const [formasPago, setFormasPago] = useState([]);
   const [errors, setErrors] = useState({});
   const [clientes, setClientes] = useState([]);
+
+  //Estados visuales
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+
 
 
 
@@ -74,6 +81,7 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
   // Cargar datos si es edición
   useEffect(() => {
     if (servicioEditado) {
+      setSuccess('');
       setForm({
         fecha: servicioEditado.fecha,
         tipo_servicio_id: servicioEditado.tipo_servicio_id,
@@ -87,48 +95,72 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
     }
   }, [servicioEditado]);
 
+  //Resetear el formulario cuando se cancela la edicion
+  useEffect(() => {
+  if (!servicioEditado) {
+    setForm(initialState);
+    setErrors({});
+  }
+}, [servicioEditado]);
+
+
+
   const handleChange = e => {
+
     setForm({ ...form, [e.target.name]: e.target.value });
+    setError('');
+    setSuccess('');
+    setErrors(prev => ({ ...prev, [e.target.name]: '' }));
+
+
   };
 
   const handleSubmit = async e => {
-    console.log('🟢 SUBMIT EJECUTADO')
     e.preventDefault();
+    console.log('🟢 SUBMIT EJECUTADO');
 
-    
-  const isValid = validateForm();
-  console.log('🧪 validateForm devuelve:', isValid);
+    setError('');
+    setSuccess('');
 
-  if (!isValid) {
-    console.log('⛔ FORMULARIO INVÁLIDO, SE DETIENE');
-    return;
-  }
+    const isValid = validateForm();
+    console.log('🧪 validateForm devuelve:', isValid);
 
-  console.log('✅ VALIDACIÓN PASADA');
-
-     if (!validateForm()) {
-  
+    if (!isValid) {
+      console.log('⛔ FORMULARIO INVÁLIDO, SE DETIENE');
       return;
-      }
-      console.log('✅ Validación OK, enviando al backend...');
+    }
+
+    setLoading(true);
 
     try {
       if (servicioEditado) {
         await api.put(`/servicios/${servicioEditado.id}`, form);
+        setSuccess('Servicio actualizado correctamente');
       } else {
         console.log('📤 PAYLOAD ENVIADO:', form);
         await api.post('/servicios', form);
+        setSuccess('Servicio guardado correctamente');
       }
 
       setForm(initialState);
+      setErrors({});
       onSuccess();
-    } catch (error) {
-      console.error(error);
-      alert('Error al guardar el servicio');
+
+    } catch (err) {
+      console.error(err);
+      setError('Error al guardar el servicio');
+    } finally {
+      setLoading(false);
     }
   };
 
+
   return (
+    <>
+
+    {error && <p style={{ color: 'red' }}>{error}</p>}
+    {success && <p style={{ color: 'green' }}>{success}</p>}
+
     <form onSubmit={handleSubmit}>
       <h3>{servicioEditado ? 'Editar Servicio' : 'Nuevo Servicio'}</h3>
 
@@ -149,7 +181,9 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
         onChange={handleChange}
         required
       >
-        <option value="">Tipo de servicio</option>
+        <option value="" disabled hidden >{servicioEditado
+    ? 'Cambiar Tipo servicio'
+    : 'Tipo de servicio'}</option>
         {tipos.map(t => (
           <option key={t.id} value={t.id}>{t.nombre}</option>
         ))}
@@ -191,7 +225,9 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
           value={form.cliente_id}
           onChange={handleChange}
         >
-          <option value="" disabled hidden >Cliente</option>
+          <option value="" disabled hidden >{servicioEditado
+            ? 'Cambiar Cliente'
+            : 'Cliente'}</option>
           {clientes.map(c => (
             <option key={c.id} value={c.id}>
               {c.nombre}
@@ -211,7 +247,9 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
         value={form.forma_pago_id}
         onChange={handleChange}
       >
-        <option value="">Forma de pago</option>
+        <option value="" disabled hidden >{servicioEditado
+          ? 'Cambiar Forma de pago'
+          : 'Forma de pago'}</option>
         {formasPago.map(f => (
           <option key={f.id} value={f.id}>{f.nombre}</option>
         ))}
@@ -227,7 +265,9 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
         onChange={handleChange}
         required
       >
-        <option value="">Estado</option>
+        <option value="" disabled hidden >{servicioEditado
+          ? 'Cambiar Estado'
+          : 'Estado'}</option>
         {estados.map(e => (
           <option key={e.id} value={e.id}>{e.nombre}</option>
         ))}
@@ -244,9 +284,13 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
         onChange={handleChange}
       />
 
-      <button type="submit">
-        {servicioEditado ? 'Actualizar' : 'Guardar'}
+      <button type="submit" disabled={loading}>
+  
+        {loading ? 'Guardando...' : servicioEditado ? 'Actualizar' : 'Guardar'}
+
       </button>
     </form>
+
+    </>
   );
 }

@@ -14,6 +14,22 @@ export default function Servicios() {
     cargarServicios();
   }, []);
 
+  const handleDelete = async id => {
+    const confirmar = window.confirm(
+      '¿Seguro que deseas eliminar este servicio?'
+    );
+
+    if (!confirmar) return;
+
+    try {
+      await api.delete(`/servicios/${id}`);
+      cargarServicios();
+    } catch (error) {
+      console.error(error);
+      alert('Error al eliminar el servicio');
+    }
+  };
+
   return (
     <>
       <ServicioForm
@@ -23,7 +39,16 @@ export default function Servicios() {
           cargarServicios();
         }}
       />
-
+      {servicioEditado && (
+        <button onClick={() => setServicioEditado(null)}>
+          Cancelar edición
+        </button>
+      )}
+      {servicioEditado && (
+  <p style={{ color: 'orange' }}>
+    Estás editando un servicio
+  </p>
+)}
       <hr />
 
       <table>
@@ -54,6 +79,14 @@ export default function Servicios() {
               <td>{s.observaciones}</td>
               <td>
                 <button onClick={() => setServicioEditado(s)}>Editar</button>
+                <button
+                    onClick={() => handleDelete(s.id)}
+                    disabled={servicioEditado?.id === s.id}
+                    style={{ marginLeft: '5px', color: 'red' }}
+                  >
+                    Eliminar
+                </button>
+
               </td>
             </tr>
           ))}
