@@ -111,8 +111,6 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
     setError('');
     setSuccess('');
     setErrors(prev => ({ ...prev, [e.target.name]: '' }));
-
-
   };
 
   const handleSubmit = async e => {
@@ -155,6 +153,18 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
   };
 
 
+  const getInputClass = (field) => {
+  return errors[field]
+    ? 'form-control is-invalid'
+    : 'form-control';
+};
+
+const getSelectClass = (field) => {
+  return errors[field]
+    ? 'form-select is-invalid'
+    : 'form-select';
+};
+
   return (
     <>
 
@@ -169,17 +179,20 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
         name="fecha"
         value={form.fecha}
         onChange={handleChange}
+        className={getInputClass('fecha')}
       />
        {errors.fecha && (
-        <small style={{ color: 'red' }}>
-        {errors.fecha}
-        </small> )}
+          <div className="invalid-feedback">
+            {errors.fecha}
+          </div>
+        )}
 
       <select
         name="tipo_servicio_id"
         value={form.tipo_servicio_id}
         onChange={handleChange}
         required
+        className={getSelectClass('tipo_servicio_id')}
       >
         <option value="" disabled hidden >{servicioEditado
     ? 'Cambiar Tipo servicio'
@@ -188,10 +201,11 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
           <option key={t.id} value={t.id}>{t.nombre}</option>
         ))}
       </select>
-       {errors.tipo_servicio_id && (
-        <small style={{ color: 'red' }}>
-        {errors.tipo_servicio_id}
-        </small> )}
+      {errors.tipo_servicio_id && (
+          <div className="invalid-feedback">
+            {errors.tipo_servicio_id}
+          </div>
+        )}
 
     
         <input
@@ -201,11 +215,13 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
           value={form.precio}
           onChange={handleChange}
           required
+          className={getInputClass('precio')}
         />
         {errors.precio && (
-        <small style={{ color: 'red' }}>
-        {errors.precio}
-        </small> )}
+          <div className="invalid-feedback">
+            {errors.precio}
+          </div>
+        )}
 
       <input
         type="number"
@@ -214,16 +230,19 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
         value={form.costo}
         onChange={handleChange}
         required
+        className={getInputClass('costo')}
       />
-       {errors.costo && (
-        <small style={{ color: 'red' }}>
-        {errors.costo}
-        </small> )}
+      {errors.costo && (
+          <div className="invalid-feedback">
+            {errors.costo}
+          </div>
+        )}
 
         <select
           name="cliente_id"
           value={form.cliente_id}
           onChange={handleChange}
+          className={getSelectClass('cliente_id')}
         >
           <option value="" disabled hidden >{servicioEditado
             ? 'Cambiar Cliente'
@@ -234,11 +253,10 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
             </option>
           ))}
         </select>
-
         {errors.cliente_id && (
-          <small style={{ color: 'red' }}>
+          <div className="invalid-feedback">
             {errors.cliente_id}
-          </small>
+          </div>
         )}
 
 
@@ -246,6 +264,7 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
         name="forma_pago_id"
         value={form.forma_pago_id}
         onChange={handleChange}
+        className={getSelectClass('forma_pago_id')}
       >
         <option value="" disabled hidden >{servicioEditado
           ? 'Cambiar Forma de pago'
@@ -255,15 +274,17 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
         ))}
       </select>
        {errors.forma_pago_id && (
-        <small style={{ color: 'red' }}>
-        {errors.forma_pago_id}
-        </small> )}
+          <div className="invalid-feedback">
+            {errors.forma_pago_id}
+          </div>
+        )}
 
       <select
         name="estado_id"
         value={form.estado_id}
         onChange={handleChange}
         required
+        className={getSelectClass('estado_id')}
       >
         <option value="" disabled hidden >{servicioEditado
           ? 'Cambiar Estado'
@@ -272,10 +293,11 @@ export default function ServicioForm({ servicioEditado, onSuccess }) {
           <option key={e.id} value={e.id}>{e.nombre}</option>
         ))}
       </select>
-       {errors.estado_id && (
-        <small style={{ color: 'red' }}>
-        {errors.estado_id}
-        </small> )}
+      {errors.estado_id && (
+        <div className="invalid-feedback">
+          {errors.estado_id}
+        </div>
+      )}
 
       <textarea
         name="observaciones"
